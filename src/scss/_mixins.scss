@@ -1,0 +1,455 @@
+@mixin flex($justify-content:flex-start, $align-items:flex-start, $flex-direction:row, $flex-wrap:wrap){
+	display: flex;
+	flex-direction: $flex-direction;
+	justify-content: $justify-content;
+	align-items: $align-items;
+	flex-wrap: $flex-wrap;
+}
+@mixin flexCenter(){
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+//grid class
+
+$breakpoints: false !default; // check if $breakpoints is defined
+$border-box-mode: false !default; // check if $breakpoints is defined
+
+@if $breakpoints{
+	@for $i from 1 through 5{
+		$max-list : nth($breakpoints, $i);
+		$size: nth($max-list, 1);
+		$max: nth($max-list, 2);
+		@if $i == 2 or $i == 3 or $i == 4{
+			$min-list: nth($breakpoints, $i + 1);
+			$min: nth($min-list, 2);
+			@media screen and (max-width: $max) and (min-width: $min){
+				@for $count from 0 through $gridSize{
+					%#{ $size }-offset-#{ $count }{
+						margin-left:  100% / $gridSize * $count;
+					};	
+				}
+				@for $count from 0 through $gridSize{
+					$list : nth($breakpoints, $i);
+					$size : nth($list, 1);
+					%#{ $size }-#{ $count }{
+						width: 100% / $gridSize * $count;
+						@if $border-box-mode{
+							box-sizing:border-box;
+						}
+						@if $count == 0{
+							display: none;
+						}
+					};		
+				}
+			}
+		}
+		@if $i == 5{ //s
+			$size: nth($max-list, 1);
+			$max: nth($max-list, 2);
+			$min: 1px;
+			@media screen and (max-width: $max){
+				@for $count from 0 through $gridSize{
+					%#{ $size }-offset-#{ $count }{
+						margin-left:  100% / $gridSize * $count;
+					};	
+				}
+				@for $count from 0 through $gridSize{
+					$list : nth($breakpoints, $i);
+					$size : nth($list, 1);
+					%#{ $size }-#{ $count }{
+						width: 100% / $gridSize * $count;
+						@if $border-box-mode{
+							box-sizing:border-box;
+						}
+						@if $count == 0{
+							display: none;
+						}
+					};		
+				}
+			}
+		}
+		@if $i == 1{ //xxl
+			$max-list : nth($breakpoints, $i);
+			$min-list : nth($breakpoints, $i + 1);
+			$size: nth($max-list, 1);
+			$max: nth($min-list, 2);
+			@media screen and (min-width: $max){
+				@for $count from 0 through $gridSize{
+					%#{ $size }-offset-#{ $count }{
+						margin-left:  100% / $gridSize * $count;
+					};	
+				}
+				@for $count from 0 through $gridSize{
+					$list : nth($breakpoints, $i);
+					$size : nth($list, 1);
+					%#{ $size }-#{ $count }{
+						width: 100% / $gridSize * $count;
+						@if $border-box-mode{
+							box-sizing:border-box;
+						}
+						@if $count == 0{
+							display: none;
+						}
+					};		
+				}
+			}
+		}
+	}
+}
+
+@mixin grid(
+
+	$xxl:null, 
+	$xl:null, 
+	$l:null, 
+	$m:null, 
+	$s:null,
+
+	$xxl-offset:null, 
+	$xl-offset:null, 
+	$l-offset:null, 
+	$m-offset:null, 
+	$s-offset:null,
+	$margin-top:null,
+	$padding-top:null,
+	$margin-bottom:null,
+	$padding-bottom:null
+	){
+	@if $xxl != null{
+		@extend %xxl-#{ $xxl };
+		@if $xxl-offset != null{
+			@extend %xxl-offset-#{ $xxl-offset };
+		}
+	}
+	@if $xl != null{
+		@extend %xl-#{ $xl };
+		@if $xl-offset != null{
+			@extend %xl-offset-#{ $xl-offset };
+		}
+	}
+	@if $l != null{
+		@extend %l-#{ $l };
+		@if $l-offset != null{
+			@extend %l-offset-#{ $l-offset };
+		}
+	}
+	@if $m != null{
+		@extend %m-#{ $m };
+		@if $m-offset != null{
+			@extend %m-offset-#{ $m-offset };
+		}
+	}
+	@if $s != null{
+		@extend %s-#{ $s };
+		@if $s-offset != null{
+			@extend %s-offset-#{ $s-offset };
+		}
+	}
+	@if $margin-top != null{
+		margin-top: $margin-top;
+	}
+	@if $padding-top != null{
+		padding-top: $padding-top;
+	}
+	@if $margin-bottom != null{
+		margin-bottom: $margin-bottom;
+	}
+	@if $padding-bottom != null{
+		padding-bottom: $padding-bottom;
+	}
+}
+
+@mixin mediaQuery(
+	$xxl:null, 
+	$xl:null, 
+	$l:null, 
+	$m:null, 
+	$s:null, 
+	$ipad-mini:null, 
+	$ipad-mini-p:null, 
+	$ipad-mini-l:null,
+	$iphone:null
+){
+	@if $xxl == 1{
+		$max : nth($breakpoints,1);
+		$min : nth($breakpoints,2);
+		@media only screen and (min-width: #{nth($min,2)}) { 
+		  	@content ; 
+		}
+	}
+	@if $xl == 1{
+		$max : nth($breakpoints,2);
+		$min : nth($breakpoints,3);
+		@media only screen and (max-width: #{nth($max,2)}) and (min-width: #{nth($min,2)}) { 
+		  	@content ; 
+		}		
+	}
+	@if $l == 1{
+		$max : nth($breakpoints,3);
+		$min : nth($breakpoints,4);
+		@media only screen and (max-width: #{nth($max,2)}) and (min-width: #{nth($min,2)}) { 
+		  	@content ; 
+		}	
+	}
+	@if $m == 1{
+		$max : nth($breakpoints,4);
+		$min : nth($breakpoints,5);
+		@media only screen and (max-width: #{nth($max,2)}) and (min-width: #{nth($min,2)}) { 
+		  	@content ; 
+		}	
+	}
+	@if $s == 1{
+		$max : nth($breakpoints,5);
+		@media only screen and (max-width: #{nth($max,2)}) { 
+		  	@content ; 
+		}
+	}
+	@if $ipad-mini == 0{
+		@media not screen 
+		  and (min-device-width: 768px) 
+		  and (max-device-width: 1024px) 
+		  and (-webkit-min-device-pixel-ratio: 1) {
+		  	@content ; 
+		}	
+	}
+	@if $ipad-mini == 1{
+		@media only screen 
+		  and (min-device-width: 768px) 
+		  and (max-device-width: 1024px) 
+		  and (-webkit-min-device-pixel-ratio: 1) {
+		  	@content ; 
+		}		
+	}
+	@if $ipad-mini-p == 0{
+		@media not screen 
+		  and (min-device-width: 768px) 
+		  and (max-device-width: 1024px) 
+		  and (orientation: portrait) 
+		  and (-webkit-min-device-pixel-ratio: 1) {
+		  	@content ; 
+		}		
+	}
+	@if $ipad-mini-p == 1{
+		@media only screen 
+		  and (min-device-width: 768px) 
+		  and (max-device-width: 1024px) 
+		  and (orientation: portrait) 
+		  and (-webkit-min-device-pixel-ratio: 1) {
+		  	@content ; 
+		}		
+	}
+	@if $ipad-mini-l == 0{
+		@media not screen 
+		  and (min-device-width: 768px) 
+		  and (max-device-width: 1024px) 
+		  and (orientation: landscape) 
+		  and (-webkit-min-device-pixel-ratio: 1) {
+		  	@content ; 
+		}		
+	}
+	@if $ipad-mini-l == 1{
+		@media only screen 
+		  and (min-device-width: 768px) 
+		  and (max-device-width: 1024px) 
+		  and (orientation: landscape) 
+		  and (-webkit-min-device-pixel-ratio: 1) {
+		  	@content ; 
+		}		
+	}
+	@if $iphone == 0{
+		@media not screen 
+		and (min-device-width : 375px) 
+		and (max-device-width : 667px),
+			(min-device-width : 414px) 
+		and (max-device-width : 736px),
+			(min-device-width : 320px) 
+		and (max-device-width : 568px),
+			(min-device-width : 320px) 
+		and (max-device-width : 480px){
+			@content ;
+		}
+	}
+	@if $iphone == 1{
+		@media only screen 
+		and (min-device-width : 375px) 
+		and (max-device-width : 667px),
+			(min-device-width : 414px) 
+		and (max-device-width : 736px),
+			(min-device-width : 320px) 
+		and (max-device-width : 568px),
+			(min-device-width : 320px) 
+		and (max-device-width : 480px){
+			@content ;
+		}
+	}
+}
+@mixin fontSize(
+	$xxl:null, 
+	$xl:null, 
+	$l:null, 
+	$m:null, 
+	$s:null
+){
+	@if $xxl != 0{
+		@include mediaQuery(1,0,0,0,0){
+			font-size: $xxl;
+		}
+	}
+	@if $xl != 0{
+		@include mediaQuery(0,1,0,0,0){
+			font-size: $xl;
+		}
+	}
+	@if $l != 0{
+		@include mediaQuery(0,0,1,0,0){
+			font-size: $l;
+		}
+	}
+	@if $m != 0{
+		@include mediaQuery(0,0,0,1,0){
+			font-size: $m;
+		}
+	}
+	@if $s != 0{
+		@include mediaQuery(0,0,0,0,1){
+			font-size: $s;
+		}
+	}
+}
+@mixin hide(	
+	$xxl:null, 
+	$xl:null, 
+	$l:null, 
+	$m:null, 
+	$s:null
+){
+	@if $xxl != 0 {
+		@include mediaQuery(1,0,0,0,0){
+			display: none;
+		};
+	}
+	@if $xl != 0{
+		@include mediaQuery(0,1,0,0,0){
+			display: none;
+		}
+	}
+	@if $l != 0{
+		@include mediaQuery(0,0,1,0,0){
+			display: none;
+		}
+	}
+	@if $m != 0{
+		@include mediaQuery(0,0,0,1,0){
+			display: none;
+		}
+	}
+	@if $s != 0{
+		@include mediaQuery(0,0,0,0,1){
+			display: none;
+		}
+	}
+}
+@mixin height(
+	$xxl:null, 
+	$xl:null, 
+	$l:null, 
+	$m:null, 
+	$s:null
+){
+	@if $xxl != 0{
+		@include mediaQuery(1,0,0,0,0){
+			height: $xxl;
+		}
+	}
+	@if $xl != 0{
+		@include mediaQuery(0,1,0,0,0){
+			height: $xl;
+		}
+	}
+	@if $l != 0{
+		@include mediaQuery(0,0,1,0,0){
+			height: $l;
+		}
+	}
+	@if $m != 0{
+		@include mediaQuery(0,0,0,1,0){
+			height: $m;
+		}
+	}
+	@if $s != 0{
+		@include mediaQuery(0,0,0,0,1){
+			height: $s;
+		}
+	}
+}
+@mixin flexColumn(
+	$xxl:null, 
+	$xl:null, 
+	$l:null, 
+	$m:null, 
+	$s:null
+){
+	@if $xxl == 1{
+		@include mediaQuery(1,0,0,0,0){
+			flex-direction: column;
+		}
+	}
+	@if $xl == 1{
+		@include mediaQuery(0,1,0,0,0){
+			flex-direction: column;
+		}
+	}
+	@if $l == 1{
+		@include mediaQuery(0,0,1,0,0){
+			flex-direction: column;
+		}
+	}
+	@if $m == 1{
+		@include mediaQuery(0,0,0,1,0){
+			flex-direction: column;
+		}
+	}
+	@if $s == 1{
+		@include mediaQuery(0,0,0,0,1){
+			flex-direction: column;
+		}
+	}
+}
+
+
+@mixin order(	
+	$xxl:null, 
+	$xl:null, 
+	$l:null, 
+	$m:null, 
+	$s:null
+){
+	@if $xxl != 0 {
+		@include mediaQuery(1,0,0,0,0){
+			order: $xxl;
+		};
+	}
+	@if $xl != 0{
+		@include mediaQuery(0,1,0,0,0){
+			order: $xl;
+		}
+	}
+	@if $l != 0{
+		@include mediaQuery(0,0,1,0,0){
+			order: $l;
+		}
+	}
+	@if $m != 0{
+		@include mediaQuery(0,0,0,1,0){
+			order: $m;
+		}
+	}
+	@if $s != 0{
+		@include mediaQuery(0,0,0,0,1){
+			order: $s;
+		}
+	}
+}
